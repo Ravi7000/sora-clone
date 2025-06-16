@@ -24,7 +24,7 @@ A modern web application that replicates the functionality and design of Sora AI
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/sora-ai-clone.git
+git clone https://github.com/Ravi7000/sora-clone.git
 cd sora-ai-clone
 ```
 

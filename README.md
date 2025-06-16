@@ -2,17 +2,6 @@
 
 A modern web application that replicates the functionality and design of Sora AI, built with Next.js, TypeScript, and Tailwind CSS.
 
-## Features
-
-- 🎨 Modern and responsive UI design
-- ⚡ Fast and efficient performance with Next.js
-- 🎭 Smooth animations using Framer Motion
-- 📱 Mobile-friendly interface
-- 🎯 Type-safe development with TypeScript
-- 🎨 Beautiful styling with Tailwind CSS
-- 📦 State management with Zustand
-- 🔄 Real-time updates and interactions
-
 ## Tech Stack
 
 - **Framework:** Next.js 15

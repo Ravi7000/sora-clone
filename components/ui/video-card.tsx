@@ -9,8 +9,16 @@ interface VideoCardProps {
   onClick: (video: MediaItem) => void
 }
 
+const formatTime = (seconds: number): string => {
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = Math.floor(seconds % 60)
+  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`
+}
+
 export function VideoCard({ video, onClick }: VideoCardProps) {
   const [isHovering, setIsHovering] = useState(false)
+  const [duration, setDuration] = useState<number>(0)
+  const [currentTime, setCurrentTime] = useState<number>(0)
   const videoRef = useRef<HTMLVideoElement>(null)
   const timeoutRef = useRef<NodeJS.Timeout>()
 
@@ -24,12 +32,9 @@ export function VideoCard({ video, onClick }: VideoCardProps) {
 
   const handleMouseEnter = () => {
     setIsHovering(true)
-    // Add a small delay before playing to avoid playing on quick hover passes
     timeoutRef.current = setTimeout(() => {
       if (videoRef.current) {
-        videoRef.current.play().catch(() => {
-          // Handle autoplay failure silently
-        })
+        videoRef.current.play().catch(() => {})
       }
     }, 200)
   }
@@ -42,8 +47,28 @@ export function VideoCard({ video, onClick }: VideoCardProps) {
     if (videoRef.current) {
       videoRef.current.pause()
       videoRef.current.currentTime = 0
+      setCurrentTime(0)
     }
   }
+
+  const handleLoadedMetadata = () => {
+    if (videoRef.current) {
+      const videoDuration = videoRef.current.duration
+      if (!isNaN(videoDuration)) {
+        setDuration(videoDuration)
+      }
+    }
+  }
+
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      setCurrentTime(videoRef.current.currentTime)
+    }
+  }
+
+  const timeDisplay = isHovering
+    ? `${formatTime(currentTime)} / ${formatTime(duration)}`
+    : formatTime(duration)
 
   return (
     <div
@@ -57,11 +82,13 @@ export function VideoCard({ video, onClick }: VideoCardProps) {
         ref={videoRef}
         src={video.src}
         className="w-full object-cover"
-        style={{ aspectRatio: video.aspectRatio === "3:2" ? "3/2" : video.aspectRatio === "2:3" ? "2/3" : "1/1" }}
+        style={{ aspectRatio: video.aspectRatio === "16:9" ? "16/9" : video.aspectRatio === "9:16" ? "9/16" : "1/1" }}
         loop
         muted
         playsInline
         poster={video.thumbnail || video.src}
+        onLoadedMetadata={handleLoadedMetadata}
+        onTimeUpdate={handleTimeUpdate}
       />
 
       {/* Overlay */}
@@ -74,10 +101,10 @@ export function VideoCard({ video, onClick }: VideoCardProps) {
         </div>
       )}
 
-      {/* Duration badge */}
-      {video.duration && (
+      {/* Duration badge with current time when playing */}
+      {duration > 0 && (
         <div className="absolute bottom-4 right-4 bg-black/60 px-2 py-1 rounded text-sm text-white">
-          {video.duration}
+          {timeDisplay}
         </div>
       )}
 

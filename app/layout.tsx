@@ -1,13 +1,14 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-import "./globals.css"
+import "../styles/globals.css"
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Sora - AI Video Generator",
-  description: "Create amazing videos and images with AI"
+  title: "AdGPT - AI Ad Generator",
+  description: "Create amazing ad images/videos with AI"
 }
 
 export default function RootLayout({
@@ -17,7 +18,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} bg-black text-white`}>{children}</body>
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      </head>
+      <body className={`${inter.className} bg-black text-white`}>
+        {children}
+        <Toaster />
+      </body>
     </html>
   )
 }

@@ -3,6 +3,7 @@
 import { Plus, ImageIcon, FileText, HelpCircle, ArrowUp, Grid3X3, FolderOpen, Upload, Loader2 } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import { useGeneratedImages } from "@/hooks/use-generated-images"
+import { useToast } from "@/hooks/use-toast"
 
 // Custom aspect ratio icons
 const AspectRatioIcon = ({ ratio }: { ratio: string }) => {
@@ -18,15 +19,15 @@ const AspectRatioIcon = ({ ratio }: { ratio: string }) => {
   }
 }
 
-export function GlassyOverlay() {
+// Accept props
+export function GlassyOverlay({ selectedAspectRatio, setSelectedAspectRatio }: { selectedAspectRatio: string, setSelectedAspectRatio: (v: string) => void }) {
   const [description, setDescription] = useState("")
   const [showAddDropdown, setShowAddDropdown] = useState(false)
   const [showAspectDropdown, setShowAspectDropdown] = useState(false)
   const [showVariationsDropdown, setShowVariationsDropdown] = useState(false)
-  const [selectedAspectRatio, setSelectedAspectRatio] = useState("2:3")
   const [selectedVariations, setSelectedVariations] = useState("4 images")
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const { toast } = useToast()
 
   const addDropdownRef = useRef<HTMLDivElement>(null)
   const aspectDropdownRef = useRef<HTMLDivElement>(null)
@@ -107,7 +108,7 @@ export function GlassyOverlay() {
         {/* Bottom Controls */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-3 py-2 bg-white/10 backdrop-blur-sm rounded hover:bg-white/20 transition-colors border border-white/20">
+            <button className="flex items-center gap-2 px-3 py-2 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-colors border border-white/20">
               <ImageIcon className="w-4 h-4 text-white" />
               <span className="text-sm text-white">Image</span>
             </button>
@@ -115,7 +116,7 @@ export function GlassyOverlay() {
             <div className="relative" ref={aspectDropdownRef}>
               <button
                 onClick={() => setShowAspectDropdown(!showAspectDropdown)}
-                className="flex items-center gap-2 px-3 py-2 bg-transparent backdrop-blur-sm rounded hover:bg-white/10 transition-colors border border-white/20"
+                className="flex items-center gap-2 px-3 py-2 bg-transparent backdrop-blur-sm rounded-lg hover:bg-white/10 transition-colors border border-white/20"
               >
                 <AspectRatioIcon ratio={selectedAspectRatio} />
                 <span className="text-sm text-white">{selectedAspectRatio}</span>
@@ -151,7 +152,7 @@ export function GlassyOverlay() {
             <div className="relative" ref={variationsDropdownRef}>
               <button
                 onClick={() => setShowVariationsDropdown(!showVariationsDropdown)}
-                className="flex items-center gap-2 px-3 py-2 bg-transparent backdrop-blur-sm rounded hover:bg-white/10 transition-colors border border-white/20"
+                className="flex items-center gap-2 px-3 py-2 bg-transparent backdrop-blur-sm rounded-lg hover:bg-white/10 transition-colors border border-white/20"
               >
                 <Grid3X3 className="w-4 h-4 text-white" />
                 <span className="text-sm text-white">4v</span>
@@ -198,7 +199,6 @@ export function GlassyOverlay() {
             onClick={async () => {
               if (!description.trim() || loading) return;
               setLoading(true);
-              setError(null);
               try {
                 const res = await fetch("/api/generate-image", {
                   method: "POST",
@@ -218,7 +218,11 @@ export function GlassyOverlay() {
                 addGeneratedImage(newImage);
                 setDescription("");
               } catch (err) {
-                setError("Image generation failed. Please try again.");
+                toast({
+                  title: "Image generation failed",
+                  description: "There was a problem generating the image. Please try again.",
+                  variant: "destructive",
+                });
               } finally {
                 setLoading(false);
               }
@@ -228,7 +232,6 @@ export function GlassyOverlay() {
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowUp className="w-4 h-4" />}
           </button>
         </div>
-        {error && <div className="text-red-500 text-xs mt-2">{error}</div>}
       </div>
     </div>
   )

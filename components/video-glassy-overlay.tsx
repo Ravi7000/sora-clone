@@ -102,7 +102,7 @@ export function VideoGlassyOverlay() {
         {/* Bottom Controls */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-3 py-2 bg-white/10 backdrop-blur-sm rounded hover:bg-white/20 transition-colors border border-white/20">
+            <button className="flex items-center gap-2 px-3 py-2 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-colors border border-white/20">
               <Video className="w-4 h-4 text-white" />
               <span className="text-sm text-white">Video</span>
             </button>
@@ -110,7 +110,7 @@ export function VideoGlassyOverlay() {
             <div className="relative" ref={aspectDropdownRef}>
               <button
                 onClick={() => setShowAspectDropdown(!showAspectDropdown)}
-                className="flex items-center gap-2 px-3 py-2 bg-transparent backdrop-blur-sm rounded hover:bg-white/10 transition-colors border border-white/20"
+                className="flex items-center gap-2 px-3 py-2 bg-transparent backdrop-blur-sm rounded-lg hover:bg-white/10 transition-colors border border-white/20"
               >
                 <AspectRatioIcon ratio={selectedAspectRatio} />
                 <span className="text-sm text-white">{selectedAspectRatio}</span>
@@ -146,7 +146,7 @@ export function VideoGlassyOverlay() {
             <div className="relative" ref={variationsDropdownRef}>
               <button
                 onClick={() => setShowVariationsDropdown(!showVariationsDropdown)}
-                className="flex items-center gap-2 px-3 py-2 bg-transparent backdrop-blur-sm rounded hover:bg-white/10 transition-colors border border-white/20"
+                className="flex items-center gap-2 px-3 py-2 bg-transparent backdrop-blur-sm rounded-lg hover:bg-white/10 transition-colors border border-white/20"
               >
                 <Grid3X3 className="w-4 h-4 text-white" />
                 <span className="text-sm text-white">4v</span>

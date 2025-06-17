@@ -21,6 +21,7 @@ interface InfiniteScrollGridProps {
   selectedMedia: MediaItem
   onSelectMedia: (media: MediaItem) => void
   contentType?: "image" | "video"
+  selectedAspectRatio?: string
 }
 
 export function InfiniteScrollGrid({
@@ -28,6 +29,7 @@ export function InfiniteScrollGrid({
   selectedMedia,
   onSelectMedia,
   contentType = "image",
+  selectedAspectRatio,
 }: InfiniteScrollGridProps) {
   const [items, setItems] = useState(initialData)
   const [loading, setLoading] = useState(false)
@@ -44,7 +46,6 @@ export function InfiniteScrollGrid({
     "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=400&h=400&fit=crop",
     "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=400&fit=crop",
     "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=400&h=400&fit=crop",
-    "https://images.unsplash.com/photo-1518738245236-7a29bb1b2c6d?w=400&h=400&fit=crop",
     "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&h=400&fit=crop",
     "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=400&h=400&fit=crop",
     "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
@@ -55,7 +56,6 @@ export function InfiniteScrollGrid({
     "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=400&h=400&fit=crop",
     "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=400&fit=crop",
     "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=400&h=400&fit=crop",
-    "https://images.unsplash.com/photo-1518738245236-7a29bb1b2c6d?w=400&h=400&fit=crop",
   ]
 
   const generateVideoTitles = () => {
@@ -156,7 +156,7 @@ export function InfiniteScrollGrid({
       const scrollTop = target.scrollTop
       const scrollHeight = target.scrollHeight
       const clientHeight = target.clientHeight
-      const scrolledToBottom = scrollTop + clientHeight >= scrollHeight - 200
+      const scrolledToBottom = scrollTop + clientHeight >= scrollHeight - 300
       
       if (scrolledToBottom && !loading && hasMore) {
         console.log("Scrolled to bottom, loading more...", {
@@ -190,8 +190,17 @@ export function InfiniteScrollGrid({
     };
   }, []);
 
+  // Sort images: selected aspect ratio first
+  const sortedItems = selectedAspectRatio
+    ? [...items].sort((a, b) => {
+        if (a.aspectRatio === selectedAspectRatio && b.aspectRatio !== selectedAspectRatio) return -1;
+        if (a.aspectRatio !== selectedAspectRatio && b.aspectRatio === selectedAspectRatio) return 1;
+        return 0;
+      })
+    : items;
+
   // Ensure we have at least 3 items for the featured layout
-  const displayItems = items.length >= 3 ? items : [...items, ...initialData].slice(0, Math.max(3, items.length))
+  const displayItems = sortedItems.length >= 3 ? sortedItems : [...sortedItems, ...initialData].slice(0, Math.max(3, sortedItems.length))
 
   return (
     <ScrollArea.Root className="flex-1 p-6 h-full w-full" type="scroll">
@@ -213,7 +222,7 @@ export function InfiniteScrollGrid({
               <img
                 src={item.src || "/placeholder.svg"}
                 alt={item.title}
-                className="w-full object-cover rounded-lg"
+                className="w-full object-cover"
                 style={{ aspectRatio: item.aspectRatio === "3:2" ? "3/2" : item.aspectRatio === "2:3" ? "2/3" : "1/1" }}
               />
               <div className="media-overlay" />

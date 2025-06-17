@@ -15,7 +15,7 @@ export function Header({ currentPage }: HeaderProps) {
           <Bell className="w-5 h-5" />
         </button>
         <button className="p-2 hover:bg-gray-800 rounded-lg transition-colors">
-          <MessageCircle className="w-5 h-5 text-orange-500" />
+          <MessageCircle className="w-5 h-5" />
         </button>
       </div>
     </header>

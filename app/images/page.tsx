@@ -43,6 +43,7 @@ export default function ImagesPage() {
   const [hydrated, setHydrated] = useState(false)
   const generatedImages = useGeneratedImages((s) => s.generatedImages)
   const hydrate = useGeneratedImages((s) => s.hydrateFromLocalStorage)
+  const [selectedAspectRatio, setSelectedAspectRatio] = useState("2:3")
 
   useEffect(() => {
     hydrate()
@@ -61,8 +62,12 @@ export default function ImagesPage() {
           selectedMedia={selectedMedia}
           onSelectMedia={setSelectedMedia}
           contentType="image"
+          selectedAspectRatio={selectedAspectRatio}
         />
-        <GlassyOverlay />
+        <GlassyOverlay
+          selectedAspectRatio={selectedAspectRatio}
+          setSelectedAspectRatio={setSelectedAspectRatio}
+        />
       </div>
     </MainLayout>
   )

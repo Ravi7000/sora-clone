@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import React from "react"
 import * as ScrollArea from "@radix-ui/react-scroll-area"
 import { Skeleton } from "@/components/ui/skeleton"
+import { VideoCard } from "@/components/ui/video-card"
 import Masonry from "react-masonry-css"
 
 export interface MediaItem {
@@ -14,6 +15,7 @@ export interface MediaItem {
   title: string
   aspectRatio: string
   duration?: string
+  thumbnail?: string
 }
 
 interface InfiniteScrollGridProps {
@@ -56,6 +58,30 @@ export function InfiniteScrollGrid({
     "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=400&h=400&fit=crop",
     "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=400&fit=crop",
     "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=400&h=400&fit=crop",
+  ]
+
+  // Sample video URLs for variety
+  const sampleVideos = [
+    "https://videos.pexels.com/video-files/32320635/13785801_1440_2560_24fps.mp4",
+    "https://videos.pexels.com/video-files/30027084/12882441_360_640_25fps.mp4",
+    "https://videos.pexels.com/video-files/6535266/6535266-sd_506_960_30fps.mp4",
+    "https://videos.pexels.com/video-files/32578182/13891524_640_360_30fps.mp4",
+    "https://videos.pexels.com/video-files/32320635/13785801_1440_2560_24fps.mp4",
+    "https://videos.pexels.com/video-files/30027084/12882441_360_640_25fps.mp4",
+    "https://videos.pexels.com/video-files/6535266/6535266-sd_506_960_30fps.mp4",
+    "https://videos.pexels.com/video-files/32578182/13891524_640_360_30fps.mp4",
+  ]
+
+  // Sample video thumbnails
+  const sampleThumbnails = [
+    "https://img.freepik.com/free-photo/close-up-shot-video-graphic-editor-using-specialized-software-edit-movie-footage-improve-visual-quality-professional-videographer-sitting-multi-monitor-workstation-enhancing-film-frames_482257-43894.jpg?ga=GA1.1.398567908.1750054778&semt=ais_hybrid&w=740",
+    "https://img.freepik.com/free-photo/close-up-shot-video-graphic-editor-using-specialized-software-edit-movie-footage-improve-visual-quality-professional-videographer-sitting-multi-monitor-workstation-enhancing-film-frames_482257-43894.jpg?ga=GA1.1.398567908.1750054778&semt=ais_hybrid&w=740",
+    "https://img.freepik.com/free-photo/close-up-shot-video-graphic-editor-using-specialized-software-edit-movie-footage-improve-visual-quality-professional-videographer-sitting-multi-monitor-workstation-enhancing-film-frames_482257-43894.jpg?ga=GA1.1.398567908.1750054778&semt=ais_hybrid&w=740",
+    "https://img.freepik.com/free-photo/close-up-shot-video-graphic-editor-using-specialized-software-edit-movie-footage-improve-visual-quality-professional-videographer-sitting-multi-monitor-workstation-enhancing-film-frames_482257-43894.jpg?ga=GA1.1.398567908.1750054778&semt=ais_hybrid&w=740",
+    "https://img.freepik.com/free-photo/close-up-shot-video-graphic-editor-using-specialized-software-edit-movie-footage-improve-visual-quality-professional-videographer-sitting-multi-monitor-workstation-enhancing-film-frames_482257-43894.jpg?ga=GA1.1.398567908.1750054778&semt=ais_hybrid&w=740",
+    "https://img.freepik.com/free-photo/close-up-shot-video-graphic-editor-using-specialized-software-edit-movie-footage-improve-visual-quality-professional-videographer-sitting-multi-monitor-workstation-enhancing-film-frames_482257-43894.jpg?ga=GA1.1.398567908.1750054778&semt=ais_hybrid&w=740",
+    "https://img.freepik.com/free-photo/close-up-shot-video-graphic-editor-using-specialized-software-edit-movie-footage-improve-visual-quality-professional-videographer-sitting-multi-monitor-workstation-enhancing-film-frames_482257-43894.jpg?ga=GA1.1.398567908.1750054778&semt=ais_hybrid&w=740",
+    "https://img.freepik.com/free-photo/close-up-shot-video-graphic-editor-using-specialized-software-edit-movie-footage-improve-visual-quality-professional-videographer-sitting-multi-monitor-workstation-enhancing-film-frames_482257-43894.jpg?ga=GA1.1.398567908.1750054778&semt=ais_hybrid&w=740",
   ]
 
   const generateVideoTitles = () => {
@@ -126,14 +152,27 @@ export function InfiniteScrollGrid({
 
     // Generate more items based on content type
     const newItems: MediaItem[] = Array.from({ length: 8 }, (_, index) => {
-      const randomImageIndex = Math.floor(Math.random() * sampleImages.length)
-      return {
-        id: items.length + index + 1,
-        type: contentType,
-        src: sampleImages[randomImageIndex],
-        title: contentType === "video" ? generateVideoTitles() : generateImageTitles(),
-        aspectRatio: ["3:2", "1:1", "2:3"][Math.floor(Math.random() * 3)],
-        ...(contentType === "video" && { duration: generateDuration() }),
+      if (contentType === "video") {
+        const randomVideoIndex = Math.floor(Math.random() * sampleVideos.length)
+        const randomThumbnailIndex = Math.floor(Math.random() * sampleThumbnails.length)
+        return {
+          id: items.length + index + 1,
+          type: "video" as const,
+          src: sampleVideos[randomVideoIndex],
+          thumbnail: sampleThumbnails[randomThumbnailIndex],
+          title: generateVideoTitles(),
+          aspectRatio: ["16:9", "1:1", "9:16"][Math.floor(Math.random() * 3)],
+          duration: generateDuration(),
+        }
+      } else {
+        const randomImageIndex = Math.floor(Math.random() * sampleImages.length)
+        return {
+          id: items.length + index + 1,
+          type: "image" as const,
+          src: sampleImages[randomImageIndex],
+          title: generateImageTitles(),
+          aspectRatio: ["3:2", "1:1", "2:3"][Math.floor(Math.random() * 3)],
+        }
       }
     })
 
@@ -146,7 +185,7 @@ export function InfiniteScrollGrid({
       setHasMore(false)
       console.log("Reached maximum items")
     }
-  }, [loading, hasMore, items.length, contentType, sampleImages])
+  }, [loading, hasMore, items.length, contentType, sampleImages, sampleVideos, sampleThumbnails])
 
   useEffect(() => {
     const target = viewportRef.current
@@ -201,32 +240,30 @@ export function InfiniteScrollGrid({
           columnClassName="masonry-grid_column"
         >
           {displayItems.map((item) => (
-            <div
-              key={item.id}
-              className="media-card-no-border group mb-4 cursor-pointer relative"
-              onClick={() => onSelectMedia(item)}
-            >
-              <img
-                src={item.src || "/placeholder.svg"}
-                alt={item.title}
-                className="w-full object-cover"
-                style={{ aspectRatio: item.aspectRatio === "3:2" ? "3/2" : item.aspectRatio === "2:3" ? "2/3" : "1/1" }}
+            item.type === "video" ? (
+              <VideoCard
+                key={item.id}
+                video={item}
+                onClick={onSelectMedia}
               />
-              <div className="media-overlay" />
-              {item.type === "video" && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Play className="w-12 h-12 text-white opacity-80" />
-                </div>
-              )}
-              {item.duration && (
-                <div className="absolute bottom-4 right-4 bg-black/60 px-2 py-1 rounded text-sm">
-                  {item.duration}
-                </div>
-              )}
-              {item.title && (
-                <div className="absolute bottom-4 left-4 text-white font-medium">{item.title}</div>
-              )}
-            </div>
+            ) : (
+              <div
+                key={item.id}
+                className="media-card-no-border group mb-4 cursor-pointer relative"
+                onClick={() => onSelectMedia(item)}
+              >
+                <img
+                  src={item.src || "/placeholder.svg"}
+                  alt={item.title}
+                  className="w-full object-cover"
+                  style={{ aspectRatio: item.aspectRatio === "3:2" ? "3/2" : item.aspectRatio === "2:3" ? "2/3" : "1/1" }}
+                />
+                <div className="media-overlay" />
+                {item.title && (
+                  <div className="absolute bottom-4 left-4 text-white font-medium">{item.title}</div>
+                )}
+              </div>
+            )
           ))}
           {loading && (
             Array.from({ length: 3 }).map((_, idx) => (

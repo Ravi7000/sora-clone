@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       size,
       response_format: "url",
       model: "dall-e-3",
-      quality: "hd",
+      quality: "standard",
     };
 
     const openaiRes = await fetch('https://api.openai.com/v1/images/generations', {

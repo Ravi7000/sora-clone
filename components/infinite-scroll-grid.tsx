@@ -1,7 +1,7 @@
 "use client"
 
 import { Play } from "lucide-react"
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import React from "react"
 import * as ScrollArea from "@radix-ui/react-scroll-area"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -176,28 +176,15 @@ export function InfiniteScrollGrid({
     }
   }, [loadMoreItems, loading, hasMore])
 
-  useEffect(() => {
-    const target = viewportRef.current;
-    if (!target) return;
-
-    const testScroll = () => {
-      console.log("Scroll event fired!");
-    };
-
-    target.addEventListener("scroll", testScroll);
-    return () => {
-      target.removeEventListener("scroll", testScroll);
-    };
-  }, []);
-
-  // Sort images: selected aspect ratio first
-  const sortedItems = selectedAspectRatio
-    ? [...items].sort((a, b) => {
-        if (a.aspectRatio === selectedAspectRatio && b.aspectRatio !== selectedAspectRatio) return -1;
-        if (a.aspectRatio !== selectedAspectRatio && b.aspectRatio === selectedAspectRatio) return 1;
-        return 0;
-      })
-    : items;
+  // Memoize sorted items to prevent unnecessary re-sorting
+  const sortedItems = useMemo(() => {
+    if (!selectedAspectRatio) return items;
+    return [...items].sort((a, b) => {
+      if (a.aspectRatio === selectedAspectRatio && b.aspectRatio !== selectedAspectRatio) return -1;
+      if (a.aspectRatio !== selectedAspectRatio && b.aspectRatio === selectedAspectRatio) return 1;
+      return 0;
+    });
+  }, [items, selectedAspectRatio]);
 
   // Ensure we have at least 3 items for the featured layout
   const displayItems = sortedItems.length >= 3 ? sortedItems : [...sortedItems, ...initialData].slice(0, Math.max(3, sortedItems.length))

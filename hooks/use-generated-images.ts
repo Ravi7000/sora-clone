@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface GeneratedImage {
   id: number;
@@ -11,26 +12,19 @@ export interface GeneratedImage {
 interface GeneratedImagesState {
   generatedImages: GeneratedImage[];
   addGeneratedImage: (img: GeneratedImage) => void;
-  hydrateFromLocalStorage: () => void;
 }
 
-const GENERATED_IMAGES_KEY = "generated_images";
-
-export const useGeneratedImages = create<GeneratedImagesState>((set) => ({
-  generatedImages: [],
-  addGeneratedImage: (img) => {
-    set((state) => {
-      const updated = [img, ...state.generatedImages];
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(GENERATED_IMAGES_KEY, JSON.stringify(updated));
-      }
-      return { generatedImages: updated };
-    });
-  },
-  hydrateFromLocalStorage: () => {
-    if (typeof window !== "undefined") {
-      const data = window.localStorage.getItem(GENERATED_IMAGES_KEY);
-      set({ generatedImages: data ? JSON.parse(data) : [] });
+export const useGeneratedImages = create<GeneratedImagesState>()(
+  persist(
+    (set, get) => ({
+      generatedImages: [],
+      addGeneratedImage: (img) => {
+        set((state) => ({ generatedImages: [img, ...state.generatedImages] }));
+      },
+    }),
+    {
+      name: "generated_images",
+      partialize: (state) => ({ generatedImages: state.generatedImages }),
     }
-  },
-})); 
+  )
+); 

@@ -147,7 +147,11 @@ export function GlassyOverlay({ selectedAspectRatio, setSelectedAspectRatio }: {
           </div>
 
           <button
-            className="p-2 text-white/80 hover:text-white transition-colors hover:bg-white/10 rounded-lg"
+            className={`p-2 transition-colors rounded-lg ${
+              !description.trim() || loading
+                ? 'text-white/40 cursor-not-allowed'
+                : 'text-white/80 hover:text-white hover:bg-white/10'
+            }`}
             onClick={async () => {
               if (!description.trim() || loading) return;
               setLoading(true);
@@ -157,9 +161,15 @@ export function GlassyOverlay({ selectedAspectRatio, setSelectedAspectRatio }: {
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ prompt: description, aspectRatio: selectedAspectRatio })
                 });
-                if (!res.ok) throw new Error("Failed to generate image");
+                
+                if (!res.ok) {
+                  const errorData = await res.json().catch(() => ({}));
+                  throw new Error(errorData.message || `Failed to generate image (${res.status})`);
+                }
+                
                 const data = await res.json();
-                if (!data.url) throw new Error("No image URL returned");
+                if (!data.url) throw new Error("No image URL returned from the server");
+                
                 const newImage = {
                   id: Date.now(),
                   type: "image" as const,
@@ -172,7 +182,7 @@ export function GlassyOverlay({ selectedAspectRatio, setSelectedAspectRatio }: {
               } catch (err) {
                 toast({
                   title: "Image generation failed",
-                  description: "There was a problem generating the image. Please try again.",
+                  description: err instanceof Error ? err.message : "There was a problem generating the image. Please try again.",
                   variant: "destructive",
                 });
               } finally {

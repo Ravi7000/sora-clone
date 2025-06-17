@@ -42,13 +42,11 @@ export default function ImagesPage() {
   const [selectedMedia, setSelectedMedia] = useState<MediaItem>(initialImageData[0])
   const [hydrated, setHydrated] = useState(false)
   const generatedImages = useGeneratedImages((s) => s.generatedImages)
-  const hydrate = useGeneratedImages((s) => s.hydrateFromLocalStorage)
   const [selectedAspectRatio, setSelectedAspectRatio] = useState("2:3")
 
   useEffect(() => {
-    hydrate()
     setHydrated(true)
-  }, [hydrate])
+  }, [])
 
   const allImages = [...generatedImages, ...initialImageData]
 

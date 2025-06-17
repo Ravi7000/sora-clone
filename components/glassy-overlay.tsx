@@ -24,14 +24,11 @@ export function GlassyOverlay({ selectedAspectRatio, setSelectedAspectRatio }: {
   const [description, setDescription] = useState("")
   const [showAddDropdown, setShowAddDropdown] = useState(false)
   const [showAspectDropdown, setShowAspectDropdown] = useState(false)
-  const [showVariationsDropdown, setShowVariationsDropdown] = useState(false)
-  const [selectedVariations, setSelectedVariations] = useState("4 images")
   const [loading, setLoading] = useState(false)
   const { toast } = useToast()
 
   const addDropdownRef = useRef<HTMLDivElement>(null)
   const aspectDropdownRef = useRef<HTMLDivElement>(null)
-  const variationsDropdownRef = useRef<HTMLDivElement>(null)
 
   const addGeneratedImage = useGeneratedImages((s) => s.addGeneratedImage);
 
@@ -42,9 +39,6 @@ export function GlassyOverlay({ selectedAspectRatio, setSelectedAspectRatio }: {
       }
       if (aspectDropdownRef.current && !aspectDropdownRef.current.contains(event.target as Node)) {
         setShowAspectDropdown(false)
-      }
-      if (variationsDropdownRef.current && !variationsDropdownRef.current.contains(event.target as Node)) {
-        setShowVariationsDropdown(false)
       }
     }
 
@@ -60,17 +54,11 @@ export function GlassyOverlay({ selectedAspectRatio, setSelectedAspectRatio }: {
     { label: "2:3", value: "2:3" },
   ]
 
-  const variations = [
-    { label: "4 images", value: "4 images", icon: Grid3X3 },
-    { label: "2 images", value: "2 images", icon: Grid3X3 },
-    { label: "1 image", value: "1 image", icon: ImageIcon },
-  ]
-
   return (
-    <div className="fixed bottom-6 left-0 lg:left-[16rem] right-0 z-10 px-6">
-      <div className="glassy-container w-full max-w-[760px] mx-auto p-4 space-y-4" style={{ borderRadius: "24px" }}>
+    <div className="fixed bottom-6 left-0 md:left-[16rem] right-0 z-10 px-3 md:px-6">
+      <div className="glassy-container w-full max-w-[760px] mx-auto p-3 md:p-4 space-y-4" style={{ borderRadius: "24px" }}>
         {/* Description Input */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <div className="relative" ref={addDropdownRef}>
             <button
               onClick={() => setShowAddDropdown(!showAddDropdown)}
@@ -107,8 +95,8 @@ export function GlassyOverlay({ selectedAspectRatio, setSelectedAspectRatio }: {
 
         {/* Bottom Controls */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-3 py-2 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-colors border border-white/20">
+          <div className="flex items-center gap-2 md:gap-3">
+            <button className="flex items-center gap-2 px-2 md:px-3 py-2 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-colors border border-white/20">
               <ImageIcon className="w-4 h-4 text-white" />
               <span className="text-sm text-white">Image</span>
             </button>
@@ -116,7 +104,7 @@ export function GlassyOverlay({ selectedAspectRatio, setSelectedAspectRatio }: {
             <div className="relative" ref={aspectDropdownRef}>
               <button
                 onClick={() => setShowAspectDropdown(!showAspectDropdown)}
-                className="flex items-center gap-2 px-3 py-2 bg-transparent backdrop-blur-sm rounded-lg hover:bg-white/10 transition-colors border border-white/20"
+                className="flex items-center gap-2 px-2 md:px-3 py-2 bg-transparent backdrop-blur-sm rounded-lg hover:bg-white/10 transition-colors border border-white/20"
               >
                 <AspectRatioIcon ratio={selectedAspectRatio} />
                 <span className="text-sm text-white">{selectedAspectRatio}</span>
@@ -141,42 +129,6 @@ export function GlassyOverlay({ selectedAspectRatio, setSelectedAspectRatio }: {
                         </div>
                         <div className="w-4 h-4 border border-white/40 rounded-full flex items-center justify-center">
                           {selectedAspectRatio === ratio.value && <div className="w-2 h-2 bg-white rounded-full" />}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="relative" ref={variationsDropdownRef}>
-              <button
-                onClick={() => setShowVariationsDropdown(!showVariationsDropdown)}
-                className="flex items-center gap-2 px-3 py-2 bg-transparent backdrop-blur-sm rounded-lg hover:bg-white/10 transition-colors border border-white/20"
-              >
-                <Grid3X3 className="w-4 h-4 text-white" />
-                <span className="text-sm text-white">4v</span>
-              </button>
-
-              {showVariationsDropdown && (
-                <div className="absolute bottom-full mb-2 left-0 glassy-container rounded-2xl p-3 min-w-[160px]">
-                  <h3 className="text-white/80 text-sm font-medium mb-3">Variations</h3>
-                  <div className="space-y-2">
-                    {variations.map((variation) => (
-                      <button
-                        key={variation.value}
-                        onClick={() => {
-                          setSelectedVariations(variation.value)
-                          setShowVariationsDropdown(false)
-                        }}
-                        className="flex items-center justify-between w-full p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          <variation.icon className="w-4 h-4" />
-                          <span className="text-sm">{variation.label}</span>
-                        </div>
-                        <div className="w-4 h-4 border border-white/40 rounded-full flex items-center justify-center">
-                          {selectedVariations === variation.value && <div className="w-2 h-2 bg-white rounded-full" />}
                         </div>
                       </button>
                     ))}
